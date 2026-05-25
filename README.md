@@ -78,6 +78,10 @@ class TodoistSchedule(ScheduleProvider):
 register(TodoistSchedule)
 ```
 
+## PREVIEW
+
+![Preview](https://raw.githubusercontent.com/Hermie-cell/hermes-morning-briefing/main/assets/preview.png)
+
 ## Tecnologias
 
 - Python 3.12+
@@ -90,7 +94,3 @@ register(TodoistSchedule)
 ## Creditos
 
 Creado por [@Shugar03](https://x.com/TheShugarBoy) para [Salta Dev](https://github.com/salta-dev) y la comunidad Hermes Agent.
-
-## PREVIEW
-
-![Preview](https://raw.githubusercontent.com/Hermie-cell/hermes-morning-briefing/main/assets/preview.png)
