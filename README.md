@@ -2,7 +2,7 @@
 
 **Tu dosis diaria de clima + agenda + deadlines + noticias + audio, directo a Telegram.**
 
-Un pipeline modular que corre todas las mananas a las 7 AM y te entrega un HTML con diseno mint oscuro + una burbuja de voz con el resumen.
+Un pipeline modular que corre todas las mananas a las 7 AM y te entrega un HTML con diseno oscuro + una burbuja de voz con el resumen.
 
 ## Una linea lo instala
 
@@ -20,7 +20,7 @@ curl -fsSL https://raw.githubusercontent.com/Shugar03/hermes-morning-briefing/ma
 | Noticias | Google News RSS | 3 secciones: AI/Tech, Mercados, Global |
 | Frase estoica | 40 frases rotativas | — |
 | Audio (TTS) | Resumen narrado | Edge/OpenAI TTS |
-| Diseno | Mint Mono Minimal (taste-skill) | — |
+| Diseno | Oscuro premium | — |
 
 ## Modo de uso
 
@@ -52,7 +52,7 @@ python3 ~/.hermes/scripts/morning-briefing.py
                                    │
                           ┌────────▼────────┐
                           │   builder.py    │
-                          │  template.html  │  ← taste-skill mint
+                          │   template.html  │
                           └────────┬────────┘
                                    │
                     ┌──────────────┴──────────────┐
@@ -90,5 +90,3 @@ register(TodoistSchedule)
 ## Creditos
 
 Creado por [@Shugar03](https://x.com/TheShugarBoy) para [Salta Dev](https://github.com/salta-dev) y la comunidad Hermes Agent.
-
-Diseño basado en [taste-skill](https://github.com/Leonxlnx/taste-skill) mint mono minimal.
