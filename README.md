@@ -1,4 +1,4 @@
-# Morning Briefing para Hermes Agent 🐝
+# Morning Briefing para Hermes Agent 🌞
 
 **Tu dosis diaria de clima + agenda + deadlines + noticias + audio, directo a Telegram.**
 
