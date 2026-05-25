@@ -25,6 +25,23 @@ schedule:
   notion_key: "${NOTION_API_KEY}"
   db_id: "${NOTION_SCHEDULE_DB_ID}"
   ds_id: "${NOTION_DEADLINES_DB_ID}"
+  # Notion property names (default: Spanish / Sherman Study Hub).
+  # Override if your database uses different column names:
+  # properties:
+  #   day: Day
+  #   status: Status
+  #   order: Order
+  #   time: Time
+  #   professor: Professor
+  #   location: Location
+  #   date: Date
+  # Alternative: read schedule from a Notion page (bulleted list items)
+  # Use when your calendar is a page with blocks, not a queryable database.
+  #
+  # provider: notion-page
+  # notion_key: "${NOTION_API_KEY}"
+  # page_id: "<your-page-id>"
+  # ds_id: ""
 
 audio:
   provider: briefing-audio
@@ -39,6 +56,9 @@ news_sections:
 # Output paths
 output_html: /tmp/morning-briefing.html
 output_audio: /tmp/morning-briefing-voice.txt
+
+# Optional: set MORNING_IDEA env var or add here to feature a daily content idea
+# content_idea: "Escribir thread sobre el nuevo modelo de OpenAI"
 
 # Optional: wiki digest path
 # wiki_path: ~/.hermes/wiki/log.md

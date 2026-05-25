@@ -2,6 +2,7 @@
 
 import re
 import html
+import sys
 import urllib.request
 from xml.etree import ElementTree
 from . import NewsProvider, NewsSection, NewsItem, register
@@ -27,12 +28,13 @@ class GoogleNewsRSS(NewsProvider):
         return True
 
     def _fetch_feed(self, url: str) -> list[NewsItem]:
-        """Parse Google News RSS → list of NewsItem."""
+        """Parse Google News RSS → list of NewsItem.
+        Handles both RSS 2.0 (<rss><channel><item>) and Atom feeds.
+        """
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         try:
             with urllib.request.urlopen(req, timeout=8) as resp:
                 raw = resp.read()
-                # Google News RSS sometimes has encoding issues — force UTF-8
                 try:
                     text = raw.decode("utf-8")
                 except UnicodeDecodeError:
@@ -40,6 +42,32 @@ class GoogleNewsRSS(NewsProvider):
                 text = re.sub(r'^<\?xml[^>]*\?>', '', text)
                 root = ElementTree.fromstring(text.encode("utf-8"))
                 items = []
+
+                # Try RSS 2.0 format first (<rss><channel><item>)
+                channel = root.find("channel")
+                if channel is not None:
+                    for item in channel.iter("item"):
+                        title_el = item.find("title")
+                        link_el = item.find("link")
+                        if title_el is not None and title_el.text:
+                            title = html.unescape(title_el.text).strip()
+                            # RSS 2.0: link can be <link>text</link> or <link href="url"/>
+                            href = ""
+                            if link_el is not None:
+                                href = link_el.text or link_el.attrib.get("href", "") or ""
+                            # Try <dc:creator> for attribution
+                            source = ""
+                            try:
+                                dc = item.find("{http://purl.org/dc/elements/1.1/}creator")
+                                if dc is not None and dc.text:
+                                    source = html.unescape(dc.text).strip()
+                            except Exception:
+                                pass
+                            items.append(NewsItem(title=title, url=href, source=source))
+                    if items:
+                        return items[:self.max_per_section]
+
+                # Fallback: try Atom format
                 for entry in root.iter("{http://www.w3.org/2005/Atom}entry"):
                     title_el = entry.find("{http://www.w3.org/2005/Atom}title")
                     link_el = entry.find("{http://www.w3.org/2005/Atom}link")
@@ -54,7 +82,8 @@ class GoogleNewsRSS(NewsProvider):
                                 source = html.unescape(src_title.text or "")
                         items.append(NewsItem(title=title, url=href, source=source))
                 return items[:self.max_per_section]
-        except Exception:
+        except Exception as e:
+            print(f"[warn] News feed failed: {url[:60]}... — {e}", file=sys.stderr)
             return []
 
     def get_headlines(self, sections: list[str] | None = None) -> list[NewsSection]:

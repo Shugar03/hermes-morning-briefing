@@ -2,6 +2,10 @@
 
 Reads today's events and deadlines from a Notion database.
 Requires NOTION_API_KEY env var and a Notion DB ID in config.
+
+Property names (day, status, order, time, professor, location, date)
+are configurable via `properties` in the YAML config and default to
+Spanish names for Sherman's Study Hub schema.
 """
 
 from datetime import datetime, timezone
@@ -11,12 +15,25 @@ from . import ScheduleProvider, Schedule, Event, Deadline, register
 DAY_NAMES = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"]
 DEADLINE_DAYS_WARNING = 12
 
+# Default property names (Spanish / Sherman Study Hub)
+DEFAULT_PROPS = {
+    "day": "Dia",
+    "status": "Estado",
+    "order": "Orden",
+    "time": "Horario",
+    "professor": "Profesor",
+    "location": "Ubicacion",
+    "date": "Fecha",
+}
+
 
 class NotionSchedule(ScheduleProvider):
-    def __init__(self, notion_key: str, db_id: str, ds_id: str | None = None):
+    def __init__(self, notion_key: str, db_id: str, ds_id: str | None = None,
+                 properties: dict | None = None):
         self.notion_key = notion_key
         self.db_id = db_id
         self.ds_id = ds_id or db_id
+        self.p = {**DEFAULT_PROPS, **(properties or {})}
 
     def is_available(self) -> bool:
         return bool(self.notion_key) and bool(self.db_id)
@@ -70,11 +87,11 @@ class NotionSchedule(ScheduleProvider):
         payload = {
             "filter": {
                 "and": [
-                    {"property": "Dia", "select": {"equals": day_name}},
-                    {"property": "Estado", "status": {"does_not_equal": "Completado"}},
+                    {"property": self.p["day"], "select": {"equals": day_name}},
+                    {"property": self.p["status"], "status": {"does_not_equal": "Completado"}},
                 ]
             },
-            "sorts": [{"property": "Orden", "direction": "ascending"}],
+            "sorts": [{"property": self.p["order"], "direction": "ascending"}],
         }
         results = self._notion_query(self.db_id, payload)
         for r in results:
@@ -82,9 +99,9 @@ class NotionSchedule(ScheduleProvider):
             title = self._get_title(props)
             if not title:
                 continue
-            time_str = self._get_select(props, "Horario") or ""
-            prof = self._get_text(props, "Profesor")
-            ubic = self._get_text(props, "Ubicacion")
+            time_str = self._get_select(props, self.p["time"]) or ""
+            prof = self._get_text(props, self.p["professor"])
+            ubic = self._get_text(props, self.p["location"])
             meta_parts = [p for p in [prof, ubic] if p]
             meta = " | ".join(meta_parts) if meta_parts else ""
             events.append(Event(time=time_str, title=title, meta=meta))
@@ -95,17 +112,17 @@ class NotionSchedule(ScheduleProvider):
                 dl_payload = {
                     "filter": {
                         "and": [
-                            {"property": "Estado", "status": {"does_not_equal": "Completado"}},
-                            {"property": "Fecha", "date": {"on_or_after": today_str}},
+                            {"property": self.p["status"], "status": {"does_not_equal": "Completado"}},
+                            {"property": self.p["date"], "date": {"on_or_after": today_str}},
                         ]
                     },
-                    "sorts": [{"property": "Fecha", "direction": "ascending"}],
+                    "sorts": [{"property": self.p["date"], "direction": "ascending"}],
                 }
                 dl_results = self._notion_query(self.ds_id, dl_payload)
                 for r in dl_results:
                     props = r.get("properties", {})
                     title = self._get_title(props)
-                    date_prop = props.get("Fecha", {}).get("date", {})
+                    date_prop = props.get(self.p["date"], {}).get("date", {})
                     if not title or not date_prop:
                         continue
                     date_str = date_prop.get("start", "")

@@ -37,8 +37,8 @@ class Schedule:
 class Weather:
     temp: float
     condition: str          # "Despejado", "Lluvia ligera", etc.
-    humidity: int
-    wind: float
+    humidity: int | None = 0
+    wind: float | None = 0
     precip_prob: int = 0
 
 @dataclass

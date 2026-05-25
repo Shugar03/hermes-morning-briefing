@@ -64,17 +64,6 @@ class OpenMeteoWeather(WeatherProvider):
         curr = data["current"]
         daily = data["daily"]
 
-        def _parse_day(idx: int) -> Weather:
-            code = daily["weather_code"][idx]
-            condition = WMO_CODES.get(code, ("Desconocido", "cloud"))[0]
-            return Weather(
-                temp=curr["temperature_2m"] if idx == 0 else (daily["temperature_2m_max"][idx] + daily["temperature_2m_min"][idx]) / 2,
-                condition=condition,
-                humidity=curr["relative_humidity_2m"] if idx == 0 else 0,
-                wind=curr["wind_speed_10m"] if idx == 0 else 0,
-                precip_prob=daily["precipitation_probability_max"][idx] if daily["precipitation_probability_max"][idx] else 0,
-            )
-
         return WeatherForecast(
             today=Weather(
                 temp=curr["temperature_2m"],
@@ -86,8 +75,8 @@ class OpenMeteoWeather(WeatherProvider):
             tomorrow=Weather(
                 temp=(daily["temperature_2m_max"][1] + daily["temperature_2m_min"][1]) / 2,
                 condition=WMO_CODES.get(daily["weather_code"][1], ("Desconocido", "cloud"))[0],
-                humidity=0,
-                wind=0,
+                humidity=None,  # not available from daily forecast
+                wind=None,      # not available from daily forecast
                 precip_prob=daily["precipitation_probability_max"][1] or 0,
             ),
         )

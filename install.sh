@@ -56,9 +56,11 @@ WRAPPER="$SCRIPT_DIR/morning-briefing.py"
 cat > "$WRAPPER" << PYEOF
 #!/usr/bin/env python3
 import sys
+import os
 sys.path.insert(0, '$INSTALL_DIR')
 from src.main import main, load_config
-cfg = load_config()
+cfg_path = '$CONFIG_DIR/morning-briefing.yaml'
+cfg = load_config(cfg_path)
 html_path = main(cfg)
 print(f"HTML saved to {html_path}")
 print(f"AUDIO_SCRIPT: {cfg.get('output_audio', '/tmp/morning-briefing-voice.txt')}")
