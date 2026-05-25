@@ -65,12 +65,18 @@ class NotionPageSchedule(ScheduleProvider):
 
             if btype == "bulleted_list_item" and in_today_section:
                 # Parse "HH:MM - HH:MM  |  Title  -- Meta"
-                match = re.match(r"(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*\|\s*(.+?)(?:\s*--\s*(.*))?$", text)
+                match = re.match(
+                    r"(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*\|\s*(.+?)(?:\s*--\s*(.*))?$",
+                    text,
+                )
                 if match:
                     time_str = match.group(1)
                     title = match.group(3).strip()
                     meta = match.group(4).strip() if match.group(4) else ""
                     events.append(Event(time=time_str, title=title, meta=meta))
+                else:
+                    # Fallback: treat the whole text as an event title with no time
+                    events.append(Event(time="", title=text.strip(), meta=""))
 
         return Schedule(events=events, deadlines=[], day_name=today_name)
 

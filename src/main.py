@@ -112,6 +112,8 @@ def main(config: dict | None = None):
                     kwargs["page_id"] = s_cfg["page_id"]
                 if has_db_id:
                     kwargs["db_id"] = s_cfg["db_id"]
+                if s_cfg.get("properties"):
+                    kwargs["properties"] = s_cfg["properties"]
                 s = get("schedule", s_provider, **kwargs)
                 data.schedule = s.get_events_today()
             except Exception as e:

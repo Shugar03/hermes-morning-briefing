@@ -1,6 +1,6 @@
 """Stoic quote provider (local, no API needed)."""
 
-import random
+from datetime import datetime, timezone
 from . import QuoteProvider, Quote, register
 
 
@@ -41,14 +41,14 @@ QUOTES: list[Quote] = [
 class StoicQuotes(QuoteProvider):
     def __init__(self, quotes: list[Quote] | None = None):
         self.quotes = quotes or QUOTES
-        self._index = 0
 
     def is_available(self) -> bool:
         return bool(self.quotes)
 
     def get_daily_quote(self) -> Quote:
-        q = random.choice(self.quotes)
-        return q
+        # Deterministic: same quote for the same UTC day
+        idx = datetime.now(timezone.utc).toordinal() % len(self.quotes)
+        return self.quotes[idx]
 
 
 register(StoicQuotes)

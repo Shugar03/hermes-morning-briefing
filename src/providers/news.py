@@ -2,6 +2,7 @@
 
 import re
 import html
+import sys
 import urllib.request
 from xml.etree import ElementTree
 from . import NewsProvider, NewsSection, NewsItem, register
@@ -50,8 +51,11 @@ class GoogleNewsRSS(NewsProvider):
                         link_el = item.find("link")
                         if title_el is not None and title_el.text:
                             title = html.unescape(title_el.text).strip()
-                            href = link_el.text or "" if link_el is not None else ""
-                            # Try <source> or <dc:creator> for attribution
+                            # RSS 2.0: link can be <link>text</link> or <link href="url"/>
+                            href = ""
+                            if link_el is not None:
+                                href = link_el.text or link_el.attrib.get("href", "") or ""
+                            # Try <dc:creator> for attribution
                             source = ""
                             try:
                                 dc = item.find("{http://purl.org/dc/elements/1.1/}creator")
@@ -78,7 +82,8 @@ class GoogleNewsRSS(NewsProvider):
                                 source = html.unescape(src_title.text or "")
                         items.append(NewsItem(title=title, url=href, source=source))
                 return items[:self.max_per_section]
-        except Exception:
+        except Exception as e:
+            print(f"[warn] News feed failed: {url[:60]}... — {e}", file=sys.stderr)
             return []
 
     def get_headlines(self, sections: list[str] | None = None) -> list[NewsSection]:
