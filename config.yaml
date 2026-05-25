@@ -21,20 +21,18 @@ quote:
   provider: stoic-quotes
 
 schedule:
-  provider: notion-schedule
+  provider: notion
   notion_key: "${NOTION_API_KEY}"
   db_id: "${NOTION_SCHEDULE_DB_ID}"
   ds_id: "${NOTION_DEADLINES_DB_ID}"
-  # Notion property names (default: Spanish / Sherman Study Hub).
+  # Notion property names (default: Cronograma Completo schema).
   # Override if your database uses different column names:
   # properties:
-  #   day: Day
-  #   status: Status
-  #   order: Order
-  #   time: Time
-  #   professor: Professor
-  #   location: Location
-  #   date: Date
+  #   title: "Nombre"
+  #   time: "Hora Inicio"
+  #   date: "Fecha"
+  #   professor: "Profesor"
+  #   location: "Ubicacion"
   # Alternative: read schedule from a Notion page (bulleted list items)
   # Use when your calendar is a page with blocks, not a queryable database.
   #
