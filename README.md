@@ -1,7 +1,5 @@
 # Morning Briefing para Hermes Agent 🐝
 
-![Preview](https://raw.githubusercontent.com/Hermie-cell/hermes-morning-briefing/main/assets/preview.png)
-
 **Tu dosis diaria de clima + agenda + deadlines + noticias + audio, directo a Telegram.**
 
 Un pipeline modular que corre todas las mananas a las 7 AM y te entrega un HTML con diseno oscuro + una burbuja de voz con el resumen.
@@ -92,3 +90,7 @@ register(TodoistSchedule)
 ## Creditos
 
 Creado por [@Shugar03](https://x.com/TheShugarBoy) para [Salta Dev](https://github.com/salta-dev) y la comunidad Hermes Agent.
+
+## PREVIEW
+
+![Preview](https://raw.githubusercontent.com/Hermie-cell/hermes-morning-briefing/main/assets/preview.png)
