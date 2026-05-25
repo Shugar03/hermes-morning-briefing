@@ -1,0 +1,44 @@
+# Morning Briefing — Configuration
+#
+# After running install.sh, edit this file to set up your sources.
+# Each provider is independently swappable.
+
+weather:
+  provider: open-meteo-weather
+  lat: -24.78
+  lon: -65.41
+  city: Salta
+
+news:
+  provider: google-news-rss
+  max_per_section: 5
+  # Optional: override default RSS feeds
+  # feeds:
+  #   AI & Tecnologia: https://...
+  #   Mercados & Finanzas: https://...
+
+quote:
+  provider: stoic-quotes
+
+schedule:
+  provider: notion-schedule
+  notion_key: "${NOTION_API_KEY}"
+  db_id: "${NOTION_SCHEDULE_DB_ID}"
+  ds_id: "${NOTION_DEADLINES_DB_ID}"
+
+audio:
+  provider: briefing-audio
+  lang: es
+
+# Which news sections to fetch (must match RSS feed keys)
+news_sections:
+  - AI & Tecnologia
+  - Mercados & Finanzas
+  - Politica & Global
+
+# Output paths
+output_html: /tmp/morning-briefing.html
+output_audio: /tmp/morning-briefing-voice.txt
+
+# Optional: wiki digest path
+# wiki_path: ~/.hermes/wiki/log.md
