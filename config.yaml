@@ -25,6 +25,13 @@ schedule:
   notion_key: "${NOTION_API_KEY}"
   db_id: "${NOTION_SCHEDULE_DB_ID}"
   ds_id: "${NOTION_DEADLINES_DB_ID}"
+  # Alternative: read schedule from a Notion page (bulleted list items)
+  # Use when your calendar is a page with blocks, not a queryable database.
+  #
+  # provider: notion-page
+  # notion_key: "${NOTION_API_KEY}"
+  # page_id: "<your-page-id>"
+  # ds_id: ""
 
 audio:
   provider: briefing-audio

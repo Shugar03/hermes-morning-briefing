@@ -27,12 +27,13 @@ class GoogleNewsRSS(NewsProvider):
         return True
 
     def _fetch_feed(self, url: str) -> list[NewsItem]:
-        """Parse Google News RSS → list of NewsItem."""
+        """Parse Google News RSS → list of NewsItem.
+        Handles both RSS 2.0 (<rss><channel><item>) and Atom feeds.
+        """
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         try:
             with urllib.request.urlopen(req, timeout=8) as resp:
                 raw = resp.read()
-                # Google News RSS sometimes has encoding issues — force UTF-8
                 try:
                     text = raw.decode("utf-8")
                 except UnicodeDecodeError:
@@ -40,6 +41,29 @@ class GoogleNewsRSS(NewsProvider):
                 text = re.sub(r'^<\?xml[^>]*\?>', '', text)
                 root = ElementTree.fromstring(text.encode("utf-8"))
                 items = []
+
+                # Try RSS 2.0 format first (<rss><channel><item>)
+                channel = root.find("channel")
+                if channel is not None:
+                    for item in channel.iter("item"):
+                        title_el = item.find("title")
+                        link_el = item.find("link")
+                        if title_el is not None and title_el.text:
+                            title = html.unescape(title_el.text).strip()
+                            href = link_el.text or "" if link_el is not None else ""
+                            # Try <source> or <dc:creator> for attribution
+                            source = ""
+                            try:
+                                dc = item.find("{http://purl.org/dc/elements/1.1/}creator")
+                                if dc is not None and dc.text:
+                                    source = html.unescape(dc.text).strip()
+                            except Exception:
+                                pass
+                            items.append(NewsItem(title=title, url=href, source=source))
+                    if items:
+                        return items[:self.max_per_section]
+
+                # Fallback: try Atom format
                 for entry in root.iter("{http://www.w3.org/2005/Atom}entry"):
                     title_el = entry.find("{http://www.w3.org/2005/Atom}title")
                     link_el = entry.find("{http://www.w3.org/2005/Atom}link")

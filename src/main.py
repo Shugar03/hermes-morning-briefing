@@ -15,6 +15,7 @@ Config:
 
 import os
 import sys
+import re
 import yaml
 from datetime import datetime, timezone
 
@@ -39,7 +40,13 @@ GREETINGS = [
 def load_config(path: str | None = None) -> dict:
     if path and os.path.exists(path):
         with open(path) as f:
-            return yaml.safe_load(f) or {}
+            raw = f.read()
+        # Resolve ${VAR} and $VAR patterns
+        def _resolve_env(m):
+            var = m.group(1) or m.group(2)
+            return os.environ.get(var, "")
+        raw = re.sub(r'\$\{(\w+)\}|\$(\w+)', _resolve_env, raw)
+        return yaml.safe_load(raw) or {}
 
     # Default config
     return {
@@ -94,15 +101,21 @@ def main(config: dict | None = None):
     # ── Schedule ──
     s_cfg = config.get("schedule", {})
     s_provider = s_cfg.get("provider", "")
-    if s_provider and s_cfg.get("notion_key") and s_cfg.get("db_id"):
-        try:
-            s = get("schedule", s_provider,
-                    notion_key=s_cfg["notion_key"],
-                    db_id=s_cfg["db_id"],
-                    ds_id=s_cfg.get("ds_id"))
-            data.schedule = s.get_events_today()
-        except Exception as e:
-            print(f"[warn] Schedule provider '{s_provider}': {e}", file=sys.stderr)
+    if s_provider and s_cfg.get("notion_key"):
+        # Accept both db_id (notion-schedule) and page_id (notion-page)
+        has_db_id = bool(s_cfg.get("db_id"))
+        has_page_id = bool(s_cfg.get("page_id"))
+        if has_db_id or has_page_id:
+            try:
+                kwargs = {"notion_key": s_cfg["notion_key"], "ds_id": s_cfg.get("ds_id", "")}
+                if has_page_id:
+                    kwargs["page_id"] = s_cfg["page_id"]
+                if has_db_id:
+                    kwargs["db_id"] = s_cfg["db_id"]
+                s = get("schedule", s_provider, **kwargs)
+                data.schedule = s.get_events_today()
+            except Exception as e:
+                print(f"[warn] Schedule provider '{s_provider}': {e}", file=sys.stderr)
 
     # ── News ──
     n_cfg = config.get("news", {})
