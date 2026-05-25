@@ -38,6 +38,9 @@ GREETINGS = [
 
 
 def load_config(path: str | None = None) -> dict:
+    # Load .env file as fallback for os.environ (cron context)
+    _load_dotenv()
+
     if path and os.path.exists(path):
         with open(path) as f:
             raw = f.read()
@@ -47,6 +50,24 @@ def load_config(path: str | None = None) -> dict:
             return os.environ.get(var, "")
         raw = re.sub(r'\$\{(\w+)\}|\$(\w+)', _resolve_env, raw)
         return yaml.safe_load(raw) or {}
+
+
+def _load_dotenv():
+    """Load ~/.hermes/.env into os.environ if not already set."""
+    env_path = os.path.expanduser("~/.hermes/.env")
+    if not os.path.exists(env_path):
+        return
+    with open(env_path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key = key.strip()
+            val = val.strip().strip("'\"").strip()
+            # Only set if not already in environment
+            if key not in os.environ:
+                os.environ[key] = val
 
     # Default config
     return {

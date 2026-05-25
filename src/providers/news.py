@@ -10,11 +10,11 @@ from . import NewsProvider, NewsSection, NewsItem, register
 
 RSS_FEEDS: dict[str, str] = {
     "AI & Tecnologia": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFZxYUdjU0FuUjVHZ0pWVXlnQVAB?hl=es-419&gl=AR&ceid=AR:es-419",
-    "Mercados & Finanzas": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFZxYUdjU0FuUjVHZ0pTV3lnQVAB?hl=es-419&gl=AR&ceid=AR:es-419",
+    "Mercados & Finanzas": "https://news.google.com/rss/topics/CAAqLAgKIiZDQkFTRmdvSUwyMHZNRGx6TVdZU0JtVnpMVFF4T1JvQ1FWSW9BQVAB?hl=es-419&gl=AR&ceid=AR:es-419",
     "Politica & Global": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNREpxYW5RU0FuUjVHZ0pWVXlnQVAB?hl=es-419&gl=AR&ceid=AR:es-419",
-    "Ciencia & Salud": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFZxY0d3U0FuUjVHZ0pWVXlnQVAB?hl=es-419&gl=AR&ceid=AR:es-419",
-    "Startups & Negocios": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFZxY1R3U0FuUjVHZ0pWVXlnQVAB?hl=es-419&gl=AR&ceid=AR:es-419",
-    "Desarrollo & Tech": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFZxY0RRU0FuUjVHZ0pWVXlnQVAB?hl=es-419&gl=AR&ceid=AR:es-419",
+    "Ciencia & Salud": "https://news.google.com/rss/topics/CAAqLAgKIiZDQkFTRmdvSUwyMHZNRFp0Y1RjU0JtVnpMVFF4T1JvQ1FWSW9BQVAB?hl=es-419&gl=AR&ceid=AR:es-419",
+    "Startups & Negocios": "https://news.google.com/rss/topics/CAAqLAgKIiZDQkFTRmdvSUwyMHZNRGx6TVdZU0JtVnpMVFF4T1JvQ1FWSW9BQVAB?hl=es-419&gl=AR&ceid=AR:es-419",
+    "Desarrollo & Tech": "https://news.google.com/rss/topics/CAAqLAgKIiZDQkFTRmdvSUwyMHZNRGRqTVhZU0JtVnpMVFF4T1JvQ1FWSW9BQVAB?hl=es-419&gl=AR&ceid=AR:es-419",
 }
 
 
